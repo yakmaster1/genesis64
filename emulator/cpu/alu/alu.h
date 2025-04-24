@@ -16,6 +16,7 @@
 #define OP_NEG 2
 #define OP_INC 3
 #define OP_DEC 4
+#define OP_MUL 5
 
 typedef struct ALU ALU;
 

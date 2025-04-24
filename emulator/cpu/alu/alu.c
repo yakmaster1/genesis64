@@ -34,67 +34,118 @@ void alu_setOpcode(ALU *alu, uint8_t value) {
     computeAlu(alu);
 }
 
+uint64_t checkSigned64(uint64_t number) {
+    return number & ((uint64_t)1 << 63);
+}
+
 void computeAlu(ALU *alu) {
     alu->flags = 0;
     
-    int64_t a = (int64_t)alu->inA;
-    int64_t b = (int64_t)alu->inB;
-    int64_t r = 0;
+    uint64_t inA = alu->inA;
+    uint64_t inB = alu->inB;
+
+    __uint128_t result = 0;
+    uint64_t rest = 0;
     
     switch (alu->opcode) {
 
     case OP_ADD:
-        
-        alu->out = alu->inA + alu->inB;
-        r = (int64_t)alu->out;
+        result = (__uint128_t)inA + (__uint128_t)inB;   
+        alu->out = (uint64_t)result;
+        rest = (uint64_t)(result >> 64);
 
         if (alu->out == 0) alu->flags |= FLAG_Z;
 
-        if ((int64_t)alu->out < 0) alu->flags |= FLAG_N;
+        if (checkSigned64(alu->out)) alu->flags |= FLAG_N;
 
-        if (alu->out < alu->inA) alu->flags |= FLAG_C;
+        if (alu->out < inA) alu->flags |= FLAG_C;
 
-        if ((a > 0 && b > 0 && r < 0) || (a < 0 && b < 0 && r > 0)) {
+        if (rest > 0) alu->flags |= FLAG_V;
+
+        break;
+
+    case OP_SUB:
+        result = (__uint128_t)inA - (__uint128_t)inB;     
+        alu->out = (uint64_t)result;
+        rest = (uint64_t)(result >> 64);
+
+        if (alu->out == 0) alu->flags |= FLAG_Z;
+
+        if (checkSigned64(alu->out)) alu->flags |= FLAG_N;
+
+        if (inA < inB) {
+            alu->flags |= FLAG_C;
+            alu->flags |= FLAG_U;
+        }
+
+        if (rest > 0) alu->flags |= FLAG_V;
+
+        break;    
+
+    case OP_NEG:
+
+        alu->out = ~inA +1;
+
+        if (alu->out == 0) alu->flags |= FLAG_Z;
+
+        if (checkSigned64(alu->out)) alu->flags |= FLAG_N;
+
+        if (inA != 0) alu->flags |= FLAG_C;
+
+        if (inA == INT64_MIN) alu->flags |= FLAG_V;
+        
+        break;  
+        
+    case OP_INC:
+
+        alu->out = inA +1;
+
+        if (alu->out == 0) alu->flags |= FLAG_Z;
+
+        if (checkSigned64(alu->out)) alu->flags |= FLAG_N;
+
+        if (inA == UINT64_MAX) {
+            alu->flags |= FLAG_C;
             alu->flags |= FLAG_V;
         }
 
         break;
 
-    case OP_SUB:
-
-        alu->out = alu->inA - alu->inB;
-        r = (int64_t)alu->out;
-
+    case OP_DEC:
+        alu->out = inA - 1;
+    
         if (alu->out == 0) alu->flags |= FLAG_Z;
 
-        if ((int64_t)alu->out < 0) alu->flags |= FLAG_N;
+        if (checkSigned64(alu->out)) alu->flags |= FLAG_N;
 
-        if (alu->inA < alu->inB) {
+        if (inA == 0) {
             alu->flags |= FLAG_C;
             alu->flags |= FLAG_U;
         }
+    
+        if (inA == INT64_MIN) alu->flags |= FLAG_V;
+        
+        break;
 
-        if ((a > 0 && b < 0 && r < 0) || (a < 0 && b > 0 && r > 0)) {
+    case OP_MUL: {
+        result = (__uint128_t)inA * (__uint128_t)inB;
+        
+        alu->out = (uint64_t)result;
+        rest = (uint64_t)(result >> 64);
+        
+        if (alu->out == 0) alu->flags |= FLAG_Z;
+
+        if (checkSigned64(alu->out)) alu->flags |= FLAG_N;
+        
+        if (rest > 0) {
+            alu->flags |= FLAG_C;
             alu->flags |= FLAG_V;
         }
         
-        break;    
-
-    case OP_NEG:
-
-        alu->out = ~alu->inA + 1;
-        r = (int64_t)alu->out;
-
-        if (alu->out == 0) alu->flags |= FLAG_Z;
-
-        if (r < 0) alu->flags |= FLAG_N;
-
-        if (alu->inA != 0) alu->flags |= FLAG_C;
-
-        if (a == INT64_MIN) alu->flags |= FLAG_V;
-        
-        break;   
+        break;        
+    }
     
-    default: break;
+    default: 
+        break;
     }
 }

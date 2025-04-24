@@ -4,8 +4,8 @@
 | Opcode | Beschreibung                        |
 |--------|-------------------------------------|
 | `ADD`  | Addition                            |
-| `SUB`  | Subtraktion [1]                     |
-| `NEG`  | Negation von `inA` (`0 - inA`) [2]  |
+| `SUB`  | Subtraktion `[^1]`                     |
+| `NEG`  | Negation von `inA` [2]              |
 | `INC`  | Inkrementiere `inA` um `+1`         |
 | `DEC`  | Dekrementiere `inA` um `-1`         |
 

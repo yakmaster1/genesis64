@@ -11,7 +11,7 @@ void printBits8(uint8_t value) {
 
 void printBits64(uint64_t value) {
     for (int i = 63; i >= 0; i--) {
-        printf("%d", (value >> i) & 1);
+        //printf("%d", (value >> i) & 1);
         if (i % 8 == 0 && i != 0) printf(" ");
     }
     printf("\n");
