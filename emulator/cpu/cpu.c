@@ -1,6 +1,7 @@
-#include "alu/alu.h"
+#include "cpu.h"
 
 #include <stdio.h>
+#include <stdint.h>
 
 void printBits8(uint8_t value) {
     for (int i = 7; i >= 0; i--) {
@@ -18,14 +19,9 @@ void printBits64(uint64_t value) {
 }
 
 int main() {
-    ALU *alu = init_alu();
-
-    alu_setInA(alu, (uint64_t)5);
-    alu_setInB(alu, (uint64_t)7);
-    alu_setOpcode(alu, OP_SUB);
-
-    printBits64(alu->out);
-    printBits8(alu->flags);
-
-    dispose_alu(alu);
+    for (size_t i = 0; i < 500; i++)
+    {
+        uint8_t clock = i % 2;
+        printf("%d", clock); 
+    }
 }
