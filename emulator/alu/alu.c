@@ -1,4 +1,5 @@
 #include "alu.h"
+#include "adder.h"
 
 #include <stdlib.h>
 
@@ -39,19 +40,25 @@ void computeAlu(ALU *alu) {
     uint64_t inA = alu->inA;
     uint64_t inB = alu->inB;
 
-    uint64_t shamt = inB & 0b00111111;
+    uint64_t out = 0;
+    bool cout = 0;
+
+    //uint64_t shamt = inB & 0b00111111;
     
     switch (alu->opcode) {
-
-    case ALU_ADD:
-        alu->out = inA + inB;
-        break;
-
-    case ALU_SUB: 
-        alu->out = inA + (~inB +1);
-        break;     
+        case ALU_ADD: {
+            full_adder64(inA, inB, 0, &out, &cout);
+            alu->out = out;
+            break;            
+        }
+        case ALU_SUB: {
+            uint64_t invertedB = inB ^ UINT64_MAX;
+            full_adder64(inA, invertedB, 1, &out, &cout);
+            alu->out = out;
+            break;  
+        }  
     
-    case ALU_AND:
+/*     case ALU_AND:
         alu->out = inA & inB;
         break;           
 
@@ -76,6 +83,14 @@ void computeAlu(ALU *alu) {
         if ((inA >> 63) & 0b1 && shamt != 0) shifted |= (uint64_t)(UINT64_MAX << (64 - shamt));
         alu->out = shifted;
         break;
+
+    case ALU_SLT:
+        alu->out = ((int64_t)inA < (int64_t)inB) ? 1 : 0;
+        break;
+
+    case ALU_SLTU:
+        alu->out = (inA < inB) ? 1 : 0;
+        break; */
 
     default: 
         break;
