@@ -1,9 +1,5 @@
 #include "adder.h"
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-
 void half_adder(bool a, bool b, bool *s, bool *c) {
     *s = a ^ b;
     *c = a & b;
@@ -20,11 +16,11 @@ void full_adder(bool a, bool b, bool cin, bool *s, bool *cout) {
 }
 
 void full_adder64(uint64_t a, uint64_t b, bool cin, uint64_t *s, bool *cout) {
-    bool bit_a, bit_b;
+    bool bit_a, bit_b, bit_cin;
 
-    bool bit_cin = cin;
+    bit_cin = cin;
 
-    for (size_t i = 0; i < 64; i++)
+    for (int i = 0; i < 64; i++)
     {
         bool bit_a = (a >> i) & 1;
         bool bit_b = (b >> i) & 1;
@@ -37,18 +33,4 @@ void full_adder64(uint64_t a, uint64_t b, bool cin, uint64_t *s, bool *cout) {
         bit_cin = bit_cout;
     }
     *cout = bit_cin;
-}
-
-int main(int argc, char const *argv[])
-{
-    uint64_t a = 44;
-    uint64_t b = 1;
-    bool cin = 0;
-
-    uint64_t s = 0;
-    bool cout = 0;
-    full_adder64(a, b, cin, &s, &cout);
-
-    printf("%d", s);
-    return 0;
 }
