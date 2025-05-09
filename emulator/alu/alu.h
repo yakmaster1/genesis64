@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+typedef enum ALU_OP ALU_OP;
+
 typedef enum ALU_OP {
     ALU_ADD, ALU_SUB,
     ALU_AND, ALU_OR, ALU_XOR,
@@ -10,6 +12,6 @@ typedef enum ALU_OP {
     ALU_SLT, ALU_SLTU
 };
 
-void computeAlu(uint64_t inA, uint64_t inB, uint8_t opcode, uint64_t *out);
+void computeAlu(uint64_t inA, uint64_t inB, ALU_OP opcode, uint64_t *out);
 
 #endif

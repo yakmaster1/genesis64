@@ -1,5 +1,9 @@
 #include "cpu.h"
 
+#include "../seqgen/seqgen.h"
+#include "../alu/alu.h"
+#include "../decoder/decoder.h"
+
 #include <stdio.h>
 #include <stdint.h>
 
@@ -19,9 +23,14 @@ void printBits64(uint64_t value) {
 }
 
 int main() {
-    for (size_t i = 0; i < 500; i++)
+    CPU cpu = {0};
+    ALU alu = {0};
+    Decoder dec = {0};
+    
+    Seqgen seq = get_seqgen();
+
+    for (size_t i = 0; i < 50; i++)
     {
-        uint8_t clock = i % 2;
-        printf("%d", clock); 
+
     }
 }

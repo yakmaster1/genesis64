@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void computeAlu(uint64_t inA, uint64_t inB, uint8_t opcode, uint64_t *out) {
+void computeAlu(uint64_t inA, uint64_t inB, ALU_OP opcode, uint64_t *out) {
     bool cout = 0;
     uint64_t invertedB = inB ^ UINT64_MAX;
     uint8_t shamt = inB & 0b00111111;
@@ -14,7 +14,7 @@ void computeAlu(uint64_t inA, uint64_t inB, uint8_t opcode, uint64_t *out) {
         // AU
         case ALU_ADD:
             full_adder64(inA, inB, 0, out, &cout);
-            break;            
+            break;
         case ALU_SUB: 
             full_adder64(inA, invertedB, 1, out, &cout);
             break;  
@@ -37,9 +37,19 @@ void computeAlu(uint64_t inA, uint64_t inB, uint8_t opcode, uint64_t *out) {
         case ALU_SRL: 
             bshift64(inA, shamt, 1, 0, out);
             break;
-        case ALU_SRA: {
+        case ALU_SRA: 
             bshift64(inA, shamt, 1, 1, out);
-            break;            
+            break;    
+        
+        case ALU_SLT: {
+            uint64_t sum = 0;
+            full_adder64(inA, invertedB, 1, sum, &cout);
+            *out = (uint64_t)((sum >> 63) & 1);
+        }
+        case ALU_SLTU: {
+            uint64_t _ = 0;
+            full_adder64(inA, invertedB, 1, _, &cout);
+            *out = (uint64_t)(!cout & 1);
         }
 
         default: break;
