@@ -1,13 +1,11 @@
 #ifndef SEQGEN_H
 #define SEQGEN_H
 
-#include <stdbool.h>
-
 typedef struct Seqgen Seqgen;
 typedef enum Seqphase Seqphase;
 
 enum Seqphase {
-    SEQPH_F, SEQPH_D, SEQPH_E, SEQPH_I
+    SEQPH_IF, SEQPH_ID, SEQPH_EX, SEQPH_MEM, SEQPH_WB
 };
 
 struct Seqgen
@@ -16,6 +14,7 @@ struct Seqgen
 };
 
 Seqgen get_seqgen();
+Seqphase phase_seqgen(Seqgen *seq);
 void inc_seqgen(Seqgen *seq);
 
 #endif

@@ -2,7 +2,10 @@
     "files.associations": {
         "alu.h": "c",
         "stdio.h": "c",
-        "decoder.h": "c"
+        "decoder.h": "c",
+        "stdint.h": "c",
+        "stdlib.h": "c",
+        "stdbool.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

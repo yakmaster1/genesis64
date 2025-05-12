@@ -5,10 +5,22 @@
 
 void compute_decoder(
     uint64_t inputData, 
+    uint16_t *imm,
+    uint8_t *funct7,
+    uint8_t *rs2,
+    uint8_t *rs1,
     uint8_t *funct3, 
     uint8_t *rd, 
     OPCODE *opcode
 ) {
+    *imm = 0;
+    *funct7 = 0;
+    *rs2 = 0;
+    *rs1 = 0;
+    *funct3 = 0;
+    *rd = 0;
+    *opcode = 0;
+    
     *opcode = inputData & 0b01111111;
     switch (*opcode) {
     // R-Type Layout:
@@ -19,9 +31,12 @@ void compute_decoder(
     // [11-7]  rd
     // [6-0]   opcode
     case OP_ADD:
-    case OP_SUB:
-        *funct3 = (inputData >> 12) & 0b00000111;
-        *rd = (inputData >> 7) & 0b00011111;
+    case OP_SUB: 
+        *funct7 = (inputData >> 25) & 0b1111111;
+        *rs2 = (inputData >> 20) & 0b11111;
+        *rs1 = (inputData >> 15) & 0b11111;
+        *funct3 = (inputData >> 12) & 0b111;
+        *rd = (inputData >> 7) & 0b11111;
         break;
 
     // I-Type Layout:
@@ -30,10 +45,7 @@ void compute_decoder(
     // [14-12] funct3
     // [11-7]  rd
     // [6-0]   opcode
-    case OP_ADD:
-    case OP_SUB:
-        
-        break;
+
 
     // S-Type Layout:
     // [31-25] imm[11:5]
@@ -42,10 +54,7 @@ void compute_decoder(
     // [14-12] funct3
     // [11-7]  imm[4:0]
     // [6-0]   opcode
-    case OP_ADD:
-    case OP_SUB:
-        
-        break;
+
 
     // B-Type Layout:
     // [31]    imm[12]
@@ -56,19 +65,13 @@ void compute_decoder(
     // [11-8]  imm[4:1]
     // [7]     imm[11]
     // [6-0]   opcode
-    case OP_ADD:
-    case OP_SUB:
-        
-        break;
+
 
     // U-Type Layout:
     // [31-12] imm[31:12]
     // [11-7]  rd
     // [6-0]   opcode
-    case OP_ADD:
-    case OP_SUB:
-        
-        break;
+
 
     // J-Type Layout:
     // [31]    imm[20]
@@ -77,10 +80,6 @@ void compute_decoder(
     // [19-12] imm[19:12]
     // [11-7]  rd
     // [6-0]   opcode
-    case OP_ADD:
-    case OP_SUB:
-        
-        break;
     
     default: break;
     }
