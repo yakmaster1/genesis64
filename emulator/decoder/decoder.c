@@ -1,7 +1,7 @@
 #include "decoder.h"
-#include "../opcodes.h"
 
-#include <stdint.h>
+#include "../opcodes.h"
+#include <stdio.h>
 
 void compute_decoder(
     uint64_t inputData, 
@@ -11,7 +11,7 @@ void compute_decoder(
     uint8_t *rs1,
     uint8_t *funct3, 
     uint8_t *rd, 
-    OPCODE *opcode
+    uint8_t *opcode
 ) {
     *imm = 0;
     *funct7 = 0;
@@ -30,8 +30,8 @@ void compute_decoder(
     // [14-12] funct3
     // [11-7]  rd
     // [6-0]   opcode
-    case OP_ADD:
-    case OP_SUB: 
+    case (uint8_t)OP_ADD:
+    case (uint8_t)OP_SUB: 
         *funct7 = (inputData >> 25) & 0b1111111;
         *rs2 = (inputData >> 20) & 0b11111;
         *rs1 = (inputData >> 15) & 0b11111;
@@ -45,7 +45,6 @@ void compute_decoder(
     // [14-12] funct3
     // [11-7]  rd
     // [6-0]   opcode
-
 
     // S-Type Layout:
     // [31-25] imm[11:5]

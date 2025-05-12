@@ -20,13 +20,13 @@ struct RegFile {
 };
 
 struct PipeReg {
-    uint64_t intA;
-    uint64_t intB;
-}
+    uint64_t in;
+    uint64_t out;
+};
 
-void inputPipeRegister(PipeReg *reg, uint64_t value) {
-    reg->intB = reg->intA;
-    reg->intA = value;
+void save_pipereg(PipeReg *reg, uint64_t value) {
+    reg->out = reg->in;
+    reg->in = value;
 }
 
 int main() {
@@ -36,36 +36,42 @@ int main() {
 
     uint32_t pc = 0;
 
-    PipeReg *pipeReg = calloc(4, sizeof(PipeReg));
+    PipeReg *pipeReg = calloc(5, sizeof(PipeReg));
 
-    uint64_t *dataBus = calloc(4, sizeof(uint64_t));
+    uint64_t *dataBus = calloc(5, sizeof(uint64_t));
 
     // testing
-    uint64_t test = 0b10110011;
-    ram_access(dimm, pc, 1, &test);
+    uint64_t test = (uint64_t)0 | 5;
+    ram_access(dimm, pc, true, &test);
+
+    test = (uint64_t)0 | 7;
+    ram_access(dimm, pc+1, true, &test);
     
-    for (size_t i = 0; i < 50; i++)
+    for (size_t i = 0; i < 5; i++)
     {
-        int c = i % 2;
-        
-        Seqphase phase = phase_seqgen(&seq);
-        if (c) {
-            if (phase == SEQPH_IF) {
-                ram_access(dimm, pc, 0, &dataBus[0]);
-            }
-            if (phase == SEQPH_ID) {
-                
-            }
-            if (phase == SEQPH_EX) {
-                
-            }
-            if (phase == SEQPH_MEM) {
-                
-            }
-            if (phase == SEQPH_WB) {
-                
-            }            
-        }
+    // C1
+
+        // FETCH
+        ram_access(dimm, pc, false, &(dataBus[0]));
+
+        // DECODE
+        uint16_t imm = 0;
+        uint8_t funct7 = 0;
+        uint8_t rs2 = 0;
+        uint8_t rs1 = 0;
+        uint8_t funct3 = 0;
+        uint8_t rd = 0;
+        uint8_t opcode = 0;        
+        compute_decoder(pipeReg[0].out, &imm, &funct7, &rs2, &rs1, &funct3, &rd, &opcode);
+
+        printf("%d\n", opcode);
+
+    // C2
+            
+        // FETCH
+        save_pipereg(&(pipeReg[0]), dataBus[0]);
+        pc++;
+         
     }
 
     free(regFile);
